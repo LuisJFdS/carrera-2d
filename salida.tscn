@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://d0705qacd1ijr"]
+
+[ext_resource type="Texture2D" uid="uid://3k1fjtnu5lj7" path="res://Coche F1 rojo.png" id="1_0xb47"]
+[ext_resource type="Script" uid="uid://nsjvg1k0hdct" path="res://salida.gd" id="1_5y13o"]
+[ext_resource type="Script" uid="uid://cucswbdingwot" path="res://mundo.gd" id="3_ds6rk"]
+
+[node name="Salida" type="Node2D" unique_id=1055488926]
+script = ExtResource("1_5y13o")
+
+[node name="Mundo" type="Node2D" parent="." unique_id=1091374248]
+script = ExtResource("3_ds6rk")
+
+[node name="Coche" type="Node2D" parent="." unique_id=344121432]
+
+[node name="CocheF1" type="Sprite2D" parent="Coche" unique_id=265185957]
+texture = ExtResource("1_0xb47")
+
+[node name="Camara" type="Camera2D" parent="Coche" unique_id=1818833036]
+rotation = 1.5707964
+ignore_rotation = false
