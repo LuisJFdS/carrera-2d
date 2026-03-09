@@ -20,8 +20,12 @@ func _draw():
 
 	var mitad_mundo_px = (TAMANO_MUNDO_METROS * PIXELES_POR_METRO) * 0.5
 	var paso_px = METROS_POR_CUADRO * PIXELES_POR_METRO
-
-	# ========= CUADRÍCULA =========
+	
+	# ========================================================================================
+	#	Pinta el MUNDO
+	#=========================================================================================
+	#
+	# ========= CUADRÍCULA ===================================================================
 	for x in range(-mitad_mundo_px, mitad_mundo_px + paso_px, paso_px):
 		draw_line(
 			Vector2(x, -mitad_mundo_px),
@@ -29,7 +33,7 @@ func _draw():
 			GRID_COLOR_G,
 			grosor
 		)
-
+	
 	for y in range(-mitad_mundo_px, mitad_mundo_px + paso_px, paso_px):
 		draw_line(
 			Vector2(-mitad_mundo_px, y),
@@ -37,9 +41,8 @@ func _draw():
 			GRID_COLOR_R,
 			grosor
 		)
-
+	
 	# ========= EJES =========
-
 	# EJE X POSITIVO (rojo continuo)
 	draw_line(
 		Vector2(0, 0),
@@ -72,10 +75,9 @@ func _draw():
 		#3.0
 	#)
 
-
-# ==========================
+# ============================================================================================
 # FUNCIÓN PARA LÍNEA DISCONTINUA
-# ==========================
+# ============================================================================================
 
 #func draw_dashed_line(from: Vector2, to: Vector2, color: Color, width: float):
 #

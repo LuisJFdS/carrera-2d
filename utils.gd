@@ -6,7 +6,7 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 #========================================================================================
-# Funcuón para trasladar los puntos del UNIVERSO a la PANTALLA
+# Funcuón para trasladar los puntos del UNIVERSO a la PANTALLA (Sin verificar)
 #========================================================================================
 func universo_a_pantalla(
 		vectorCamara: Vector2,
