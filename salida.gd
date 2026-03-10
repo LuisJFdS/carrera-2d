@@ -1,6 +1,11 @@
 extends Node2D
+#=============================================================================================
+#	FICHERO: salida.gd
+#	CAPTURA movimientos de ROTACIÓN del teclado
+#	MOVIMIENTOS manuales de la CÁMARA: ZOOM, ROTACIÓN y DESPLAZAMIENTO
+#=============================================================================================
 
-#	Captura los movimientos de rotación con ">" y "<"
+#====== Captura los movimientos de rotación con ">" y "<" ====================================
 var accion_rot : String = ""
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and not event.echo:
@@ -53,7 +58,7 @@ func _ready() -> void:
 #func _process(delta: float) -> void:
 func _process(_delta):
 	
-	# ================= ZOOM =================================================================
+	# ================= ZOOM CÁMARA ==========================================================
 	# Se han creado dos ACCIONES en el MAPA de ENTRADAS
 	# "+" -> "zoom+"  y  "-" -> "zoom-"
 	
@@ -72,7 +77,7 @@ func _process(_delta):
 		camara.zoom = Vector2(nuevo_zoom, nuevo_zoom)
 		print(" [-] : Zoom --: ",nuevo_zoom)
 	
-	# ================ ROTACIÓN CAMARA =======================================================
+	# ================ ROTACIÓN CÁMARA =======================================================
 	#	Utiliza la captura de eventos "func _input(event)" al inicio
 	#	"<" rota la cámara a la izquierda. Shift + ">" rota hacia la izquierda.
 	var nueva_rot := camara.rotation
@@ -86,7 +91,7 @@ func _process(_delta):
 		camara.rotation = nueva_rot
 		print(" [ < ]: rotar_izq: ",nueva_rot)
 	
-	# ================= MOVER CÁMARA =========================================================
+	# ================= DESPLAZAMIENTO CÁMARA ================================================
 	# Utiliza las flecha de movimiento del teclado
 	var nueva_pos := camara.position
 	var inc_posX := float(10.0)
@@ -110,4 +115,28 @@ func _process(_delta):
 		nueva_pos = nueva_pos + Vector2(inc_posX,0)
 		camara.position = nueva_pos
 		print("+inc_posX", camara.position)
+		
+# ===== Pintar una CRUZ ======================================================================
+func pinta_cruz(
+		centro: Vector2,
+		tam: float,
+		color: Color,
+		ancho: float = 1.0
+	) -> void:
+		
+	# línea horizontal
+	draw_line(
+		Vector2(centro.x - tam, centro.y),
+		Vector2(centro.x + tam, centro.y),
+		color,
+		ancho
+	)
+	
+	# línea vertical
+	draw_line(
+		Vector2(centro.x, centro.y - tam),
+		Vector2(centro.x, centro.y + tam),
+		color,
+		ancho
+	)
 	

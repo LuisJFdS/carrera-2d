@@ -1,13 +1,10 @@
 extends Node2D
+#=============================================================================================
+# FICHERO: mundo.gd
+#
+#=============================================================================================
 
-# ====== CONFIGURACIÓN ======
-const METROS_POR_CUADRO := 5.0
-const PIXELES_POR_METRO := 50.0
-const TAMANO_MUNDO_METROS := 5000.0   # 5 km
-const GRID_COLOR := Color(1, 1, 1, 0.08)
-const GRID_COLOR_R := Color(1, 0, 0, 0.15)
-const GRID_COLOR_G := Color(0, 1, 0, 0.1)
-const GRID_COLOR_B := Color(0, 0, 1, 0.1)
+const Cnt = preload("res://constantes.gd")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -17,9 +14,8 @@ func _ready() -> void:
 func _draw():
 	var grosor = get_viewport().get_camera_2d().zoom.x
 	grosor = grosor + 1/grosor
-
-	var mitad_mundo_px = (TAMANO_MUNDO_METROS * PIXELES_POR_METRO) * 0.5
-	var paso_px = METROS_POR_CUADRO * PIXELES_POR_METRO
+	var mitad_mundo_px = (Cnt.TAMANO_MUNDO_METROS * Cnt.PIXELES_POR_METRO) * 0.5
+	var paso_px = Cnt.METROS_POR_CUADRO * Cnt.PIXELES_POR_METRO
 	
 	# ========================================================================================
 	#	Pinta el MUNDO
@@ -30,19 +26,18 @@ func _draw():
 		draw_line(
 			Vector2(x, -mitad_mundo_px),
 			Vector2(x,  mitad_mundo_px),
-			GRID_COLOR_G,
+			Cnt.GRID_COLOR_G,
 			grosor
 		)
-	
 	for y in range(-mitad_mundo_px, mitad_mundo_px + paso_px, paso_px):
 		draw_line(
 			Vector2(-mitad_mundo_px, y),
 			Vector2( mitad_mundo_px, y),
-			GRID_COLOR_R,
+			Cnt.GRID_COLOR_R,
 			grosor
 		)
 	
-	# ========= EJES =========
+	# ========= EJES =========================================================================
 	# EJE X POSITIVO (rojo continuo)
 	draw_line(
 		Vector2(0, 0),
@@ -50,55 +45,71 @@ func _draw():
 		Color.RED,
 		grosor
 	)
-
 	# EJE X NEGATIVO (rojo discontinuo)
-	#draw_dashed_line(
-		#Vector2(0, 0),
-		#Vector2(-mitad_mundo_px, 0),
-		#Color.RED,
-		#3.0
-	#)
-
+	draw_dashed_line(
+		Vector2(0, 0),
+		Vector2(-mitad_mundo_px, 0),
+		Color.RED,
+		grosor,
+		50.0
+	)
 	# EJE Y POSITIVO (verde continuo)
 	draw_line(
 		Vector2(0, 0),
 		Vector2(0, -mitad_mundo_px),
 		Color.GREEN,
-		grosor
+		grosor,
+		50.0
+	)
+	# EJE Y NEGATIVO (verde discontinuo)
+	draw_dashed_line(
+		Vector2(0, 0),
+		Vector2(0, mitad_mundo_px),
+		Color.GREEN,
+		grosor,				#Grosor de la línea
+		50.0				#Longitud de los segmentos
 	)
 
-	# EJE Y NEGATIVO (verde discontinuo)
-	#draw_dashed_line(
-		#Vector2(0, 0),
-		#Vector2(0, mitad_mundo_px),
-		#Color.GREEN,
-		#3.0
-	#)
+#	===== PINTA CRUZ ========================================================================
+	pinta_cruz(
+		Vector2(15.0,15.0),	# Posición en metros
+		1.0,				# Tamaño en metros
+		Color.CRIMSON,		# Color
+		5					# Grosor en pixeles
+	)
+	
+	# ========================================================================================
+	#	FUNCIONES AUXILIARES
+	#=========================================================================================
+	#
+	# ========= PINTA una CRUZ ===============================================================
+# Pintar una CRUZ
+func pinta_cruz(
+		centro: Vector2,	# metros
+		tam: float,			# metros
+		color: Color,
+		grueso: float		# grosor linea
+	) -> void:
 
-# ============================================================================================
-# FUNCIÓN PARA LÍNEA DISCONTINUA
-# ============================================================================================
-
-#func draw_dashed_line(from: Vector2, to: Vector2, color: Color, width: float):
-#
-	#var dash_length := 20.0
-	#var gap_length := 20.0
-#
-	#var total_length := from.distance_to(to)
-	#var direction := (to - from).normalized()
-#
-	#var drawn := 0.0
-	#var current := from
-#
-	#while drawn < total_length:
-		#var segment_end := current + direction * min(dash_length, total_length - drawn)
-#
-		#draw_line(current, segment_end, color, width)
-#
-		#current = segment_end + direction * gap_length
-		#drawn += dash_length + gap_length
-
-
+	# línea horizontal
+	var c = centro*50
+	var t = tam*50
+	c.y = -c.y
+	draw_line(
+		Vector2(c.x - t, c.y),
+		Vector2(c.x + t, c.y),
+		color,
+		grueso
+	)
+	# línea vertical
+	draw_line(
+		Vector2(c.x, c.y - t),
+		Vector2(c.x, c.y + t),
+		color,
+		grueso
+	)
+	print("Cruz")
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass

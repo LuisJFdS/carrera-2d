@@ -13,6 +13,7 @@ script = ExtResource("3_ds6rk")
 [node name="Coche" type="Node2D" parent="." unique_id=344121432]
 
 [node name="CocheF1" type="Sprite2D" parent="Coche" unique_id=265185957]
+rotation = 3.1415927
 texture = ExtResource("1_0xb47")
 
 [node name="Camara" type="Camera2D" parent="Coche" unique_id=1818833036]

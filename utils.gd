@@ -1,4 +1,9 @@
-extends Node
+extends Object
+#=============================================================================================
+# FICHERO: utils.gd
+# PUNTOS del UNIVERSO a PANTALLA y VICEVERSA
+#
+#=============================================================================================
 
 
 # Called when the node enters the scene tree for the first time.
