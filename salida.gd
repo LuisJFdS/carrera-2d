@@ -92,7 +92,7 @@ func _process(_delta):
 		nuevo_zoom = nuevo_zoom * (1/1.02)
 		nuevo_zoom = clamp(nuevo_zoom, min_zoom, max_zoom)
 		pantalla.zoom = Vector2(nuevo_zoom, nuevo_zoom)
-		print(" [-] : Zoom --: ",nuevo_zoom)
+		#print(" [-] : Zoom --: ",nuevo_zoom)
 	
 	# ================ ROTACIÓN CÁMARA MANUAL ================================================
 	#	Utiliza la captura de eventos "func _input(event)" al inicio
