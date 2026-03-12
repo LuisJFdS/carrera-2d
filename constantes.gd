@@ -5,8 +5,8 @@ extends Object
 # Incluir: const Cnt = preload("res://constantes.gd") cuando se necesiten
 #=============================================================================================
 
-const METROS_POR_CUADRO := 5.0
-const PIXELES_POR_METRO := 50.0
+const MxC := 5.0			# METROS x CUADRADO de la REJILLA
+const PxM := 50.0			# PIXELES por METRO
 const TAMANO_MUNDO_METROS := 5000.0   # 5 km
 const GRID_COLOR := Color(1, 1, 1, 0.08)
 const GRID_COLOR_R := Color(1, 0, 0, 0.15)

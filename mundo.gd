@@ -1,7 +1,7 @@
 extends Node2D
 #=============================================================================================
 # FICHERO: mundo.gd
-#
+# PINTA el MUNDO: Rejilla, Ejes de coordenadas
 #=============================================================================================
 
 const Cnt = preload("res://constantes.gd")
@@ -9,19 +9,21 @@ const Cnt = preload("res://constantes.gd")
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	print("Pintamos Mundo ...")
-	queue_redraw()
 
 func _draw():
-	var grosor = get_viewport().get_camera_2d().zoom.x
-	grosor = grosor + 1/grosor
-	var mitad_mundo_px = (Cnt.TAMANO_MUNDO_METROS * Cnt.PIXELES_POR_METRO) * 0.5
-	var paso_px = Cnt.METROS_POR_CUADRO * Cnt.PIXELES_POR_METRO
-	
 	# ========================================================================================
 	#	Pinta el MUNDO
 	#=========================================================================================
-	#
+
 	# ========= CUADRÍCULA ===================================================================
+
+	var mitad_mundo_px = (Cnt.TAMANO_MUNDO_METROS * Cnt.PxM) * 0.5
+	var paso_px = Cnt.MxC * Cnt.PxM
+	var escala = get_viewport().get_camera_2d().zoom.x
+	var grosor = 1 / escala				# Z= 0.1 => g=10 : z= 1.0 => g=1
+	grosor = 10
+	print("Cuadrícula :", grosor)
+	
 	for x in range(-mitad_mundo_px, mitad_mundo_px + paso_px, paso_px):
 		draw_line(
 			Vector2(x, -mitad_mundo_px),
@@ -72,18 +74,17 @@ func _draw():
 
 #	===== PINTA CRUZ ========================================================================
 	pinta_cruz(
-		Vector2(15.0,15.0),	# Posición en metros
+		Vector2(20.0*Cnt.PxM,20.0*Cnt.PxM),	# Posición en metros
 		1.0,				# Tamaño en metros
 		Color.CRIMSON,		# Color
 		5					# Grosor en pixeles
 	)
 	
-	# ========================================================================================
-	#	FUNCIONES AUXILIARES
-	#=========================================================================================
-	#
-	# ========= PINTA una CRUZ ===============================================================
-# Pintar una CRUZ
+# ============================================================================================
+#	FUNCIONES AUXILIARES
+#=============================================================================================
+
+# ========= PINTA una CRUZ ===================================================================
 func pinta_cruz(
 		centro: Vector2,	# metros
 		tam: float,			# metros
@@ -92,8 +93,8 @@ func pinta_cruz(
 	) -> void:
 
 	# línea horizontal
-	var c = centro*50
-	var t = tam*50
+	var c = centro
+	var t = tam
 	c.y = -c.y
 	draw_line(
 		Vector2(c.x - t, c.y),
@@ -108,7 +109,7 @@ func pinta_cruz(
 		color,
 		grueso
 	)
-	print("Cruz")
+	print("Cruz", c )
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
