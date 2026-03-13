@@ -4,10 +4,11 @@ extends Object
 # PUNTOS del UNIVERSO a PANTALLA y VICEVERSA
 #
 #=============================================================================================
-const Cnt = preload("res://constantes.gd")
+#const Cnt = preload("res://constantes.gd")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	print("utils.gd:  func _ready print No hace nada")
 	pass # Replace with function body.
 
 #========================================================================================
@@ -44,11 +45,12 @@ func pantalla_a_universo(
 	zm: float,				# zoom
 	) -> Vector2:
 	var Vr: Vector2 = pp-cp				# posicióm pp respecto al centro de la pantalla.
-	var resultado := pu + Vr / Cnt.PxM
+	var resultado := pu + Vr / Constantes.PxM
 	resultado = resultado.rotated(ru)
 	resultado = resultado / zm
 	return resultado
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	print("utils.gd  :_process")
 	pass

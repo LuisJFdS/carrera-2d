@@ -2,78 +2,55 @@ extends Node2D
 #=============================================================================================
 # FICHERO: mundo.gd
 # PINTA el MUNDO: Rejilla, Ejes de coordenadas
+# Función pinta_cruz
 #=============================================================================================
 
-const Cnt = preload("res://constantes.gd")
+#const Cnt = preload("res://constantes.gd")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	print("Pintamos Mundo ...")
+	if Globales.flags.flag1 == 1:
+		print("mundo.gd:  func _ready() VACIO flag1: ", Globales.flags.flag1)
 
 func _draw():
+	print("mundo.gd:  func _draw() Pinta cuadrcula, coordenadas y cruz")
 	# ========================================================================================
 	#	Pinta el MUNDO
 	#=========================================================================================
 	
-
-	# ========= CUADRÍCULA ===================================================================
-	var dim = Cnt.TAMANO_MUNDO_METROS
+	# ========= PINTA CUADRÍCULA =============================================================
+	#var dim = Cnt.TAMANO_MUNDO_METROS
+	var dim = Constantes.TAMANO_MUNDO_METROS
 	var origen= Vector2(-0.5 * dim, -0.5 * dim)	# Origen de la rejilla
 	var final = Vector2( 0.5 * dim,  0.5 * dim)		# Final de la rejilla
 	var escala = get_viewport().get_camera_2d().zoom.x
-	var grosor = 1 + 1/escala				# Z= 0.1 => g=10 : z= 1.0 => g=1
+	var grosor = 3/escala				# Z= 0.1 => g=10 : z= 1.0 => g=3
 	pinta_cuadricula(
 		origen,
 		final,
-		Cnt.MxC,
+		Constantes.MxC,
 		grosor
 	)	
 
-	# ========= EJES =========================================================================
-	var mitad_mundo_px = 0.5 * Cnt.TAMANO_MUNDO_METROS
-	var mitad_mundo_py = 0.5 * Cnt.TAMANO_MUNDO_METROS	
-	# EJE X POSITIVO (rojo continuo)
-	draw_line(
-		Vector2(0, 0),
-		Vector2(mitad_mundo_px, 0),
-		Color.RED,
+	# ========= PINTA EJES ===================================================================
+	pinta_eje_coordenadas(
+		Vector2(0,0),
+		Vector2(0.5 * Constantes.TAMANO_MUNDO_METROS, 0.5 * Constantes.TAMANO_MUNDO_METROS),
 		grosor
-	)
-	# EJE X NEGATIVO (rojo discontinuo)
-	draw_dashed_line(
-		Vector2(0, 0),
-		Vector2(-mitad_mundo_px, 0),
-		Color.RED,
-		grosor,
-		50.0
-	)
-	# EJE Y POSITIVO (verde continuo)
-	draw_line(
-		Vector2(0, 0),
-		Vector2(0, -mitad_mundo_py),
-		Color.GREEN,
-		grosor,
-		50.0
-	)
-	# EJE Y NEGATIVO (verde discontinuo)
-	draw_dashed_line(
-		Vector2(0, 0),
-		Vector2(0, mitad_mundo_py),
-		Color.GREEN,
-		grosor,				#Grosor de la línea
-		50.0				#Longitud de los segmentos
 	)
 
 #	===== PINTA CRUZ ========================================================================
+	print("mundo.gd:  Llama pinta_cruz")
 	pinta_cruz(
-		Vector2(20.0*Cnt.PxM,20.0*Cnt.PxM),	# Posición en metros
+		Vector2(12.5,12.5),	# Posición en metros
 		1.0,				# Tamaño en metros
 		Color.CRIMSON,		# Color
 		5					# Grosor en pixeles
 	)
-	
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	#print("mundo.gd:  func _process() VACIO")
 	pass
 	
 # ============================================================================================
@@ -89,55 +66,90 @@ func pinta_cuadricula(
 	) -> void:
 	var dist = fin - ini
 	if dist.x * paso > 0:
-		dist.x = paso * Cnt.PxM
+		dist.x = paso * Constantes.PxM
 	else:
-		dist.x = -paso * Cnt.PxM
+		dist.x = -paso * Constantes.PxM
 	if dist.y * paso > 0:
-		dist.y = paso * Cnt.PxM
+		dist.y = paso * Constantes.PxM
 	else:
-		dist.y = -paso * Cnt.PxM
-	print("Rejilla: ", " dx:",dist.x, " dy:", dist.y)
-	print("          ini.x:",ini.x, " ini.y:",ini.y, " fin.x:",fin.x, " fin.y:",fin.y)
+		dist.y = -paso * Constantes.PxM
 	
-	for y in range(ini.y, fin.y, dist.y):
+	for y in range(ini.y, fin.y+dist.y, dist.y):
 		draw_line(
 			Vector2(ini.x, y),
 			Vector2(fin.x, y),
-			Cnt.GRID_COLOR_G,
+			Constantes.GRID_COLOR_G,
 			grosor
 		)
-	for x in range(ini.x, fin.x, dist.x):
+	for x in range(ini.x, fin.x+dist.x, dist.x):
 		draw_line(
 			Vector2(x, ini.x),
 			Vector2(x, fin.x),
-			Cnt.GRID_COLOR_G,
+			Constantes.GRID_COLOR_G,
 			grosor
 		)
-		
-# ========= PINTA una CRUZ ===================================================================
-func pinta_cruz(
-		centro: Vector2,	# metros
-		tam: float,			# metros
-		color: Color,
-		grueso: float		# grosor linea
-	) -> void:
 
-	# línea horizontal
-	var c = centro
-	var t = tam
-	c.y = -c.y
+# ========= PINTA EJE de COORDENADAS =========================================================
+func pinta_eje_coordenadas(
+		centro: Vector2,
+		long: Vector2,		# (m)
+		grosor
+	) -> void:
+		# EJE X POSITIVO (rojo -> continuo)
 	draw_line(
-		Vector2(c.x - t, c.y),
-		Vector2(c.x + t, c.y),
+		centro,
+		Vector2(centro.x + long.x, centro.x),
+		Color.RED,
+		grosor
+	)
+	# EJE X NEGATIVO (rojo -> discontinuo)
+	draw_dashed_line(
+		centro,
+		Vector2(centro.x - long.x, centro.x),
+		Color.RED,
+		grosor,
+		50.0
+	)
+	# EJE Y POSITIVO (verde -> continuo)
+	draw_line(
+		centro,
+		Vector2(centro.y, centro.y-long.y),
+		Color.GREEN,
+		grosor,
+		50.0
+	)
+	# EJE Y NEGATIVO (verde -> discontinuo)
+	draw_dashed_line(
+		centro,
+		Vector2(centro.y, centro.y + long.y),
+		Color.GREEN,
+		grosor,				#Grosor de la línea
+		50.0				#Longitud de los segmentos
+	)
+	
+	# ===== Pintar una CRUZ ======================================================================
+func pinta_cruz(
+		centro: Vector2,
+		tam: float,
+		color: Color,
+		ancho: float = 10.0
+	) -> void:
+	var c= centro * Constantes.PxM
+	var l= tam * Constantes.PxM
+		
+	# línea horizontal
+	draw_line(
+		Vector2(c.x - l, -c.y),
+		Vector2(c.x + l, -c.y),
 		color,
-		grueso
+		ancho
 	)
 	# línea vertical
 	draw_line(
-		Vector2(c.x, c.y - t),
-		Vector2(c.x, c.y + t),
+		Vector2(c.x, -c.y - l),
+		Vector2(c.x, -c.y + l),
 		color,
-		grueso
+		ancho
 	)
-	print("Cruz", c )
+	print("mundo.gd:  func pintada cruz c: ", c, " l: ",l)
 	

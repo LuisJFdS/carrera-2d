@@ -4,9 +4,7 @@ extends Node2D
 #	CAPTURA movimientos manuales de ROTACIÓN del teclado
 #	CAPTURA movimientos manuales de la CÁMARA: ZOOM, ROTACIÓN y DESPLAZAMIENTO
 #	CAPTURA desplazamiento  y botones del MOUSE
-#	func pinta_cruz (centro, tamaño, color ancho)
 #=============================================================================================
-const Cnt = preload("res://constantes.gd")		# cuando se necesiten
 
 @onready var pantalla: Camera2D = $Coche/Camara
 @onready var pantalla_dim: Vector2 = get_viewport().get_visible_rect().size
@@ -27,6 +25,109 @@ class MouseDatos:
 	var b3 : int = 0
 	var b45 : int =0
 var ms := MouseDatos.new()
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	var script_globales = load("res://globales.gd")
+	# ============== INICIALIZA la CAMARA ====================================================
+	print("salida.gd: func _ready() print -ini camara-")
+	pantalla.enabled = true
+	pantalla.position = cam.pos_U * Constantes.PxM
+	pantalla.rotation = cam.rot_U
+	pantalla.zoom = Vector2(cam.zoom, cam.zoom)
+	print("salida.gd: func _ready() print -Camara activada y en posicion-")
+
+# ============================================================================================
+#	_process
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta: float) -> void:
+#=============================================================================================
+func _process(_delta):
+	# ================= ZOOM CÁMARA MANUAL ===================================================
+	# Se han creado dos ACCIONES en el MAPA de ENTRADAS
+	# "+" -> "zoom+"  y  "-" -> "zoom-"
+	var min_zoom := 0.1
+	var max_zoom := 1.0
+	var nuevo_zoom := pantalla.zoom.x
+	if Input.is_action_pressed("zoom+"):
+		nuevo_zoom = nuevo_zoom * 1.02
+		nuevo_zoom = clamp(nuevo_zoom, min_zoom, max_zoom)
+		pantalla.zoom = Vector2(nuevo_zoom, nuevo_zoom)
+		#print(" [+] : Zoom ++: ",nuevo_zoom)
+	
+	if Input.is_action_pressed("zoom-"):
+		nuevo_zoom = nuevo_zoom * (1/1.02)
+		nuevo_zoom = clamp(nuevo_zoom, min_zoom, max_zoom)
+		pantalla.zoom = Vector2(nuevo_zoom, nuevo_zoom)
+		#print(" [-] : Zoom --: ",nuevo_zoom)
+	
+	# ================ ROTACIÓN CÁMARA MANUAL ================================================
+	#	Utiliza la captura de eventos "func _input(event)" al inicio
+	#	"<" rota la cámara a la izquierda. Shift + ">" rota hacia la izquierda.
+	if accion_rot == "rotar_der":
+		cam.rot_U = cam.rot_U + 2*PI/360				# Rota a la DERECHA
+		pantalla.rotation = -cam.rot_U
+		#print(" [Shift + >] : rotar_der: ",cam.rot_U)
+	
+	if accion_rot == "rotar_izq":
+		cam.rot_U = cam.rot_U - 2*PI/360
+		pantalla.rotation = - cam.rot_U
+		#print(" [ < ]: rotar_izq: ",cam.rot_U)
+	
+	# ===== DESPLAZAMIENTO CÁMARA en el UNIVERSO MANUAL ======================================
+	# Utiliza las flecha de movimiento del teclado
+	var inc_posX := float(0.1)
+	var inc_posY := inc_posX
+	if Input.is_action_pressed("ui_up"):
+		cam.pos_U = cam.pos_U + Vector2(0,-inc_posY)	# Cámara ARRIBA
+		pantalla.position = cam.pos_U * Constantes.PxM
+		#print("+inc_posY", pantalla.position)
+	
+	if Input.is_action_pressed("ui_down"):
+		cam.pos_U = cam.pos_U + Vector2(0,inc_posY)		# Cámara ABAJO
+		pantalla.position = cam.pos_U * Constantes.PxM
+		#print("-inc_posY", pantalla.position)
+	
+	if Input.is_action_pressed("ui_left"):
+		cam.pos_U = cam.pos_U + Vector2(-inc_posX,0)	# Cámara IZQUIERDA
+		pantalla.position = cam.pos_U * Constantes.PxM
+		#print("-inc_posX", pantalla.position)
+	
+	if Input.is_action_pressed("ui_right"):
+		cam.pos_U = cam.pos_U + Vector2(inc_posX,0)		# Cámara DERECHA
+		pantalla.position = cam.pos_U * Constantes.PxM
+		#print("+inc_posX", pantalla.position)
+
+	# ===== PINTAR CRUCES CON EL MOUSE ======================================================
+	if ms.b1 == 1:
+		var cr := Vector2(20.0,20.0)
+
+		#var punto := Utils.pantalla_a_universo(
+			#ms.pos,
+			#pantalla_centro,
+			#cam.pos_U,
+			#cam.rot_U,
+			#cam.zoom
+			#)
+		print("salida.gd: b1 mouse llama a <Mundo.pinta_cruz>")		
+		#Mundo.pinta_cruz(
+			#Vector2(15.0,15.0),					# Posición en metros
+			#1.0,				# Tamaño en metros
+			#Color.CRIMSON,		# Color
+			#5					# Grosor en pixeles
+		#)
+		# queue_redraw()
+		print("Cruz: ",cr)
+		
+	# ===== PROCESAMOS LOS BOTONES DEL MOUSE =================================================
+	if ms.b1 == 1:
+		ms.b1 = 2
+	elif ms.b1 == 3:
+		ms.b1 = 0
+
+# ===== FIN func _process(_delta)
+#=============================================================================================
+
 
 #====== Captura los movimientos de rotación con ">" y "<" ====================================
 var accion_rot : String = ""
@@ -58,124 +159,3 @@ func _input(event) -> void:
 				ms.b1 = 1		# Flanco de BAJADA
 			else:
 				ms.b1 = 3		# Flanco de Subida
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	print("Empieza la carrera ...")
-	
-	pantalla.enabled = true
-	pantalla.position = cam.pos_U * Cnt.PxM
-	pantalla.rotation = cam.rot_U
-	pantalla.zoom = Vector2(cam.zoom, cam.zoom)
-	print("Camara activada y posicionada")
-
-
-# ============================================================================================
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-func _process(_delta):
-
-	# ================= ZOOM CÁMARA MANUAL ===================================================
-	# Se han creado dos ACCIONES en el MAPA de ENTRADAS
-	# "+" -> "zoom+"  y  "-" -> "zoom-"
-	
-	var min_zoom := 0.1
-	var max_zoom := 1.0
-	var nuevo_zoom := pantalla.zoom.x
-	if Input.is_action_pressed("zoom+"):
-		nuevo_zoom = nuevo_zoom * 1.02
-		nuevo_zoom = clamp(nuevo_zoom, min_zoom, max_zoom)
-		pantalla.zoom = Vector2(nuevo_zoom, nuevo_zoom)
-		print(" [+] : Zoom ++: ",nuevo_zoom)
-	
-	if Input.is_action_pressed("zoom-"):
-		nuevo_zoom = nuevo_zoom * (1/1.02)
-		nuevo_zoom = clamp(nuevo_zoom, min_zoom, max_zoom)
-		pantalla.zoom = Vector2(nuevo_zoom, nuevo_zoom)
-		#print(" [-] : Zoom --: ",nuevo_zoom)
-	
-	# ================ ROTACIÓN CÁMARA MANUAL ================================================
-	#	Utiliza la captura de eventos "func _input(event)" al inicio
-	#	"<" rota la cámara a la izquierda. Shift + ">" rota hacia la izquierda.
-	if accion_rot == "rotar_der":
-		cam.rot_U = cam.rot_U + 2*PI/360				# Rota a la DERECHA
-		pantalla.rotation = -cam.rot_U
-		print(" [Shift + >] : rotar_der: ",cam.rot_U)
-	
-	if accion_rot == "rotar_izq":
-		cam.rot_U = cam.rot_U - 2*PI/360
-		pantalla.rotation = - cam.rot_U
-		print(" [ < ]: rotar_izq: ",cam.rot_U)
-	
-	# ===== DESPLAZAMIENTO CÁMARA en el UNIVERSO MANUAL ======================================
-	# Utiliza las flecha de movimiento del teclado
-	var inc_posX := float(0.1)
-	var inc_posY := inc_posX
-	if Input.is_action_pressed("ui_up"):
-		cam.pos_U = cam.pos_U + Vector2(0,-inc_posY)	# Cámara ARRIBA
-		pantalla.position = cam.pos_U * Cnt.PxM
-		print("+inc_posY", pantalla.position)
-	
-	if Input.is_action_pressed("ui_down"):
-		cam.pos_U = cam.pos_U + Vector2(0,inc_posY)		# Cámara ABAJO
-		pantalla.position = cam.pos_U * Cnt.PxM
-		print("-inc_posY", pantalla.position)
-	
-	if Input.is_action_pressed("ui_left"):
-		cam.pos_U = cam.pos_U + Vector2(-inc_posX,0)	# Cámara IZQUIERDA
-		pantalla.position = cam.pos_U * Cnt.PxM
-		print("-inc_posX", pantalla.position)
-	
-	if Input.is_action_pressed("ui_right"):
-		cam.pos_U = cam.pos_U + Vector2(inc_posX,0)		# Cámara DERECHA
-		pantalla.position = cam.pos_U * Cnt.PxM
-		print("+inc_posX", pantalla.position)
-
-	# ===== PINTAR CRUCES CON EL MOUSE ======================================================
-	if ms.b1 == 1:
-		print("Antes de <Utils.pantalla_a_universo>", Utils)
-		#var punto := Utils.pantalla_a_universo(
-			#ms.pos,
-			#pantalla_centro,
-			#cam.pos_U,
-			#cam.rot_U,
-			#cam.zoom
-			#)
-		pinta_cruz(
-			Vector2(15.0,15.0),	# Posición en metros
-			1.0,				# Tamaño en metros
-			Color.CRIMSON,		# Color
-			5					# Grosor en pixeles
-		)
-		print("Cruz 15x, 15y")
-		
-	# ===== PROCESAMOS LOS BOTONES DEL MOUSE =================================================
-	if ms.b1 == 1:
-		ms.b1 = 2
-	elif ms.b1 == 3:
-		ms.b1 = 0
-
-# ===== FIN func _process(_delta)
-#=============================================================================================
-
-# ===== Pintar una CRUZ ======================================================================
-func pinta_cruz(
-		centro: Vector2,
-		tam: float,
-		color: Color,
-		ancho: float = 1.0
-	) -> void:
-	# línea horizontal
-	draw_line(
-		Vector2(centro.x - tam, centro.y),
-		Vector2(centro.x + tam, centro.y),
-		color,
-		ancho
-	)
-	# línea vertical
-	draw_line(
-		Vector2(centro.x, centro.y - tam),
-		Vector2(centro.x, centro.y + tam),
-		color,
-		ancho
-	)

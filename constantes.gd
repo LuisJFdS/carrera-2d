@@ -1,5 +1,6 @@
-extends Object
+extends Node	# Node: globales.  Al ser globales necesita un Nodo
 #=============================================================================================
+# Node: globales
 # FICHERO: constantes.gd
 # PARAMETROS del PROGRAMA
 # Incluir: const Cnt = preload("res://constantes.gd") cuando se necesiten
