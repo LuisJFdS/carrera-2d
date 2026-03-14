@@ -9,17 +9,18 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if Globales.flags.flag1 == 1:
-		print("mundo.gd:  func _ready() VACIO flag1: ", Globales.flags.flag1)
+	if Globales.flags.flag0 and Globales.flags.flag1 < 2:
+		Globales.flags.flag1 += 1
+		print("mundo.gd/func _ready() VACIO flag1: ", Globales.flags.flag1)
 
 func _draw():
-	print("mundo.gd:  func _draw() Pinta cuadrcula, coordenadas y cruz")
+	if Globales.flags.flag0:
+		print("mundo.gd/func _draw() Pinta cuadricula, coordenadas y cruz (12.5,12.5)")
 	# ========================================================================================
 	#	Pinta el MUNDO
 	#=========================================================================================
 	
 	# ========= PINTA CUADRÍCULA =============================================================
-	#var dim = Cnt.TAMANO_MUNDO_METROS
 	var dim = Constantes.TAMANO_MUNDO_METROS
 	var origen= Vector2(-0.5 * dim, -0.5 * dim)	# Origen de la rejilla
 	var final = Vector2( 0.5 * dim,  0.5 * dim)		# Final de la rejilla
@@ -40,17 +41,20 @@ func _draw():
 	)
 
 #	===== PINTA CRUZ ========================================================================
-	print("mundo.gd:  Llama pinta_cruz")
 	pinta_cruz(
 		Vector2(12.5,12.5),	# Posición en metros
 		1.0,				# Tamaño en metros
 		Color.CRIMSON,		# Color
 		5					# Grosor en pixeles
 	)
+	if Globales.flags.flag0 and Globales.flags.flag1 < 1:
+		print("mundo.gd/func _ready - final flag1", Globales.flags.flag1)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	#print("mundo.gd:  func _process() VACIO")
+	if Globales.flags.flag0 and Globales.flags.flag1 < 2:
+		Globales.flags.flag1 += 1
+		print("mundo.gd/func _process() - VACIO flag1", Globales.flags.flag1)
 	pass
 	
 # ============================================================================================
@@ -151,5 +155,5 @@ func pinta_cruz(
 		color,
 		ancho
 	)
-	print("mundo.gd:  func pintada cruz c: ", c, " l: ",l)
+	print("mundo.gd/func pinta_cruz() c y l: ", c," ",l)
 	

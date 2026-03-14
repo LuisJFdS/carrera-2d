@@ -5,7 +5,7 @@ extends Node2D
 #	CAPTURA movimientos manuales de la CÁMARA: ZOOM, ROTACIÓN y DESPLAZAMIENTO
 #	CAPTURA desplazamiento  y botones del MOUSE
 #=============================================================================================
-
+@onready var mundo: = get_node("Mundo")	# Permite utilizar las funciones de Mundo
 @onready var pantalla: Camera2D = $Coche/Camara
 @onready var pantalla_dim: Vector2 = get_viewport().get_visible_rect().size
 @onready var pantalla_centro: Vector2 = pantalla_dim * 0.5
@@ -28,21 +28,32 @@ var ms := MouseDatos.new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	var script_globales = load("res://globales.gd")
+	if Globales.flags.flag0 and Globales.flags.flag3 < 2:
+		Globales.flags.flag3 += 1
+		print("salida.gd/func _ready()-inicio flag3: ", Globales.flags.flag3)
+	
 	# ============== INICIALIZA la CAMARA ====================================================
-	print("salida.gd: func _ready() print -ini camara-")
+	print("salida.gd/func _ready() print -ini camara-")
 	pantalla.enabled = true
 	pantalla.position = cam.pos_U * Constantes.PxM
 	pantalla.rotation = cam.rot_U
 	pantalla.zoom = Vector2(cam.zoom, cam.zoom)
-	print("salida.gd: func _ready() print -Camara activada y en posicion-")
+	print("salida.gd/func _ready() print -Camara activada y en posicion-")
 
+	if Globales.flags.flag0 and Globales.flags.flag3 < 2:
+		Globales.flags.flag3 += 1
+		print("salida.gd/func _ready()-Final flag3: ", Globales.flags.flag3)
+		
+		
 # ============================================================================================
 #	_process
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:
 #=============================================================================================
 func _process(_delta):
+	if Globales.flags.flag0 and Globales.flags.flag4 < 2:
+		Globales.flags.flag4 += 1
+		print("salida.gd/func _process()-Inicio flag4: ", Globales.flags.flag4)
 	# ================= ZOOM CÁMARA MANUAL ===================================================
 	# Se han creado dos ACCIONES en el MAPA de ENTRADAS
 	# "+" -> "zoom+"  y  "-" -> "zoom-"
@@ -100,8 +111,7 @@ func _process(_delta):
 
 	# ===== PINTAR CRUCES CON EL MOUSE ======================================================
 	if ms.b1 == 1:
-		var cr := Vector2(20.0,20.0)
-
+		var cr := Vector2(15.0,15.0)
 		#var punto := Utils.pantalla_a_universo(
 			#ms.pos,
 			#pantalla_centro,
@@ -109,14 +119,13 @@ func _process(_delta):
 			#cam.rot_U,
 			#cam.zoom
 			#)
-		print("salida.gd: b1 mouse llama a <Mundo.pinta_cruz>")		
-		#Mundo.pinta_cruz(
-			#Vector2(15.0,15.0),					# Posición en metros
-			#1.0,				# Tamaño en metros
-			#Color.CRIMSON,		# Color
-			#5					# Grosor en pixeles
-		#)
-		# queue_redraw()
+		
+		mundo.pinta_cruz(
+			cr,					# Posición en metros
+			1.0,				# Tamaño en metros
+			Color.CRIMSON,		# Color
+			5					# Grosor en pixeles
+		)
 		print("Cruz: ",cr)
 		
 	# ===== PROCESAMOS LOS BOTONES DEL MOUSE =================================================
@@ -124,6 +133,10 @@ func _process(_delta):
 		ms.b1 = 2
 	elif ms.b1 == 3:
 		ms.b1 = 0
+		
+	if Globales.flags.flag0 and Globales.flags.flag4 < 2:
+		Globales.flags.flag4 += 1
+		print("salida.gd/func _process()-Final flag4: ", Globales.flags.flag4)
 
 # ===== FIN func _process(_delta)
 #=============================================================================================
