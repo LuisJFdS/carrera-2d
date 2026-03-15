@@ -1,19 +1,11 @@
-extends Object
+extends Node	# Node: globales.  Al ser globales necesita un Nodo
 #=============================================================================================
 # FICHERO: utils.gd
 # PUNTOS del UNIVERSO a PANTALLA y VICEVERSA
 #
 #=============================================================================================
-#const Cnt = preload("res://constantes.gd")
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	print("utils.gd:  func _ready print No hace nada")
-	pass # Replace with function body.
-
-#========================================================================================
-# Funcuón para trasladar los puntos del UNIVERSO a la PANTALLA (Sin verificar)
-#========================================================================================
+# ===== Coordenadas UNIVERSO a PANTALLA ======================================================
 func universo_a_pantalla(
 		vectorCamara: Vector2,
 		rotacionCamara: float,	#Radianes
@@ -38,19 +30,15 @@ func universo_a_pantalla(
 
 # ===== Coordenadas PANTALLA a UNIVERSO ======================================================
 func pantalla_a_universo(
-	pp: Vector2,			# punto de la pantalla (repecto al vertice sup-izq)
-	cp: Vector2,			# centro de pantalla (repecto al vertice sup-izq)
-	pu: Vector2,			# posición en el universo de la pantalla
-	ru: float,				# rotación de la cámara en radianes
-	zm: float,				# zoom
+	pp: Vector2,			# (pixel) punto de la pantalla (repecto al vertice sup-izq)
+	tp: Vector2,			# (pixel) tamaño de pantalla
+	pu: Vector2,			# (m) posición en el universo del centro de la pantalla
+	ru: float,				# (rad) rotación de la cámara en el universo
+	zm: float,				# (multiplo) zoom
 	) -> Vector2:
-	var Vr: Vector2 = pp-cp				# posicióm pp respecto al centro de la pantalla.
+	print ("Entrada PaU pp, tp, pu ", pp, tp, pu)
+	var Vr: Vector2 = pp - tp/2				# posicióm pp respecto al centro de la pantalla.
 	var resultado := pu + Vr / Constantes.PxM
 	resultado = resultado.rotated(ru)
 	resultado = resultado / zm
 	return resultado
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	print("utils.gd  :_process")
-	pass

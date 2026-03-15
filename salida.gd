@@ -1,48 +1,34 @@
 extends Node2D
 #=============================================================================================
 #	FICHERO: salida.gd
+#	_ready()
+#	INICIALIZA la CÁMARA
+#	_process()
 #	CAPTURA movimientos manuales de ROTACIÓN del teclado
 #	CAPTURA movimientos manuales de la CÁMARA: ZOOM, ROTACIÓN y DESPLAZAMIENTO
-#	CAPTURA desplazamiento  y botones del MOUSE
+#	CAPTURA Botones del MOUSE
 #=============================================================================================
-@onready var mundo: = get_node("Mundo")	# Permite utilizar las funciones de Mundo
-@onready var pantalla: Camera2D = $Coche/Camara
+@onready var mundo = get_node("Mundo")		# Permite utilizar las funciones de Mundo
+
+@onready var pantalla: Camera2D = get_node("Coche/Camara")
 @onready var pantalla_dim: Vector2 = get_viewport().get_visible_rect().size
-@onready var pantalla_centro: Vector2 = pantalla_dim * 0.5
-
-class CamaraDatos:
-	var pos_U : Vector2 = Vector2.ZERO			# Posición PUNTO universo
-	var pos_P : Vector2 = Vector2.ZERO			# Posición PANTALLA
-	var rot_U : float = 0.0						# Rotación UNIVERSO
-	var zoom : float = 0.2						# Zoom
-	var size_P : Vector2 = Vector2.ZERO			# TAMAÑO de PANTALLA
-var cam := CamaraDatos.new()
-
-class MouseDatos:
-	var pos : Vector2 = Vector2.ZERO
-	var b1 : int = 0
-	var b2 : int = 0
-	var b3 : int = 0
-	var b45 : int =0
-var ms := MouseDatos.new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if Globales.flags.flag0 and Globales.flags.flag3 < 2:
-		Globales.flags.flag3 += 1
-		print("salida.gd/func _ready()-inicio flag3: ", Globales.flags.flag3)
+	if Globales.flags.flag0:
+		print("Salida _ready() -inicio")
+	print("Nodo mundo: ", mundo)
 	
-	# ============== INICIALIZA la CAMARA ====================================================
-	print("salida.gd/func _ready() print -ini camara-")
+	# ============== INICIALIZA la PANTALLA ==================================================
+	Globales.cam.size_P= pantalla_dim
+	# ============== INICIALIZA la PANTALLA ==================================================
 	pantalla.enabled = true
-	pantalla.position = cam.pos_U * Constantes.PxM
-	pantalla.rotation = cam.rot_U
-	pantalla.zoom = Vector2(cam.zoom, cam.zoom)
-	print("salida.gd/func _ready() print -Camara activada y en posicion-")
+	pantalla.position = Globales.cam.pos_U * Constantes.PxM
+	pantalla.rotation = Globales.cam.rot_U
+	pantalla.zoom = Vector2(Globales.cam.zoom, Globales.cam.zoom)
 
-	if Globales.flags.flag0 and Globales.flags.flag3 < 2:
-		Globales.flags.flag3 += 1
-		print("salida.gd/func _ready()-Final flag3: ", Globales.flags.flag3)
+	if Globales.flags.flag0:
+		print("Salida _ready() -final")
 		
 		
 # ============================================================================================
@@ -51,9 +37,10 @@ func _ready() -> void:
 #func _process(delta: float) -> void:
 #=============================================================================================
 func _process(_delta):
-	if Globales.flags.flag0 and Globales.flags.flag4 < 2:
-		Globales.flags.flag4 += 1
-		print("salida.gd/func _process()-Inicio flag4: ", Globales.flags.flag4)
+	if Globales.flags.flag0 and Globales.flags.flag2 < 2:
+		Globales.flags.flag2 += 1
+		print("Salida _process() -inicio flag2: ", Globales.flags.flag2)
+		
 	# ================= ZOOM CÁMARA MANUAL ===================================================
 	# Se han creado dos ACCIONES en el MAPA de ENTRADAS
 	# "+" -> "zoom+"  y  "-" -> "zoom-"
@@ -76,13 +63,13 @@ func _process(_delta):
 	#	Utiliza la captura de eventos "func _input(event)" al inicio
 	#	"<" rota la cámara a la izquierda. Shift + ">" rota hacia la izquierda.
 	if accion_rot == "rotar_der":
-		cam.rot_U = cam.rot_U + 2*PI/360				# Rota a la DERECHA
-		pantalla.rotation = -cam.rot_U
+		Globales.cam.rot_U += 2*PI/360				# Rota a la DERECHA
+		pantalla.rotation = -Globales.cam.rot_U
 		#print(" [Shift + >] : rotar_der: ",cam.rot_U)
 	
 	if accion_rot == "rotar_izq":
-		cam.rot_U = cam.rot_U - 2*PI/360
-		pantalla.rotation = - cam.rot_U
+		Globales.cam.rot_U -= 2*PI/360
+		pantalla.rotation = -Globales.cam.rot_U
 		#print(" [ < ]: rotar_izq: ",cam.rot_U)
 	
 	# ===== DESPLAZAMIENTO CÁMARA en el UNIVERSO MANUAL ======================================
@@ -90,53 +77,28 @@ func _process(_delta):
 	var inc_posX := float(0.1)
 	var inc_posY := inc_posX
 	if Input.is_action_pressed("ui_up"):
-		cam.pos_U = cam.pos_U + Vector2(0,-inc_posY)	# Cámara ARRIBA
-		pantalla.position = cam.pos_U * Constantes.PxM
+		Globales.cam.pos_U += Vector2(0,-inc_posY)	# Cámara ARRIBA
+		pantalla.position = Globales.cam.pos_U * Constantes.PxM
 		#print("+inc_posY", pantalla.position)
 	
 	if Input.is_action_pressed("ui_down"):
-		cam.pos_U = cam.pos_U + Vector2(0,inc_posY)		# Cámara ABAJO
-		pantalla.position = cam.pos_U * Constantes.PxM
+		Globales.cam.pos_U += Vector2(0,inc_posY)		# Cámara ABAJO
+		pantalla.position = Globales.cam.pos_U * Constantes.PxM
 		#print("-inc_posY", pantalla.position)
 	
 	if Input.is_action_pressed("ui_left"):
-		cam.pos_U = cam.pos_U + Vector2(-inc_posX,0)	# Cámara IZQUIERDA
-		pantalla.position = cam.pos_U * Constantes.PxM
+		Globales.cam.pos_U += Vector2(-inc_posX,0)	# Cámara IZQUIERDA
+		pantalla.position = Globales.cam.pos_U * Constantes.PxM
 		#print("-inc_posX", pantalla.position)
 	
 	if Input.is_action_pressed("ui_right"):
-		cam.pos_U = cam.pos_U + Vector2(inc_posX,0)		# Cámara DERECHA
-		pantalla.position = cam.pos_U * Constantes.PxM
+		Globales.cam.pos_U += Vector2(inc_posX,0)		# Cámara DERECHA
+		pantalla.position = Globales.cam.pos_U * Constantes.PxM
 		#print("+inc_posX", pantalla.position)
-
-	# ===== PINTAR CRUCES CON EL MOUSE ======================================================
-	if ms.b1 == 1:
-		var cr := Vector2(15.0,15.0)
-		#var punto := Utils.pantalla_a_universo(
-			#ms.pos,
-			#pantalla_centro,
-			#cam.pos_U,
-			#cam.rot_U,
-			#cam.zoom
-			#)
 		
-		mundo.pinta_cruz(
-			cr,					# Posición en metros
-			1.0,				# Tamaño en metros
-			Color.CRIMSON,		# Color
-			5					# Grosor en pixeles
-		)
-		print("Cruz: ",cr)
-		
-	# ===== PROCESAMOS LOS BOTONES DEL MOUSE =================================================
-	if ms.b1 == 1:
-		ms.b1 = 2
-	elif ms.b1 == 3:
-		ms.b1 = 0
-		
-	if Globales.flags.flag0 and Globales.flags.flag4 < 2:
-		Globales.flags.flag4 += 1
-		print("salida.gd/func _process()-Final flag4: ", Globales.flags.flag4)
+	if Globales.flags.flag0 and Globales.flags.flag2 < 2:
+		Globales.flags.flag2 += 1
+		print("Salida _process() -final  flag2: ", Globales.flags.flag2)
 
 # ===== FIN func _process(_delta)
 #=============================================================================================
@@ -161,14 +123,20 @@ func _input(event) -> void:
 			accion_rot=""
 	#====== Captura DESPLAZAMIENTO MOUSE======================================================
 	if event is InputEventMouseMotion:
-		var eMM := event as InputEventMouseMotion
-		ms.pos = eMM.position
-		#print("Mouse posición: ",eMM.position)
+		var eMM := event as InputEventMouseMotion # position, relative y velocity
+		# print("MouseMotion: ", eMM)
+		Globales.ms.pos = eMM.position
 	#====== Captura BOTONES MOUSE=============================================================
 	if event  is InputEventMouseButton:
-		var eMB := event as InputEventMouseButton
-		if eMB.button_index == MOUSE_BUTTON_MASK_LEFT:
+		var eMB := event as InputEventMouseButton # 1,2,3,4 y 5 
+		print("Salida - event MouseButton: ", eMB)
+		# print("Salida - event Boton mouse: - index: b1= ", eMB.button_index)
+		if eMB.button_index and MOUSE_BUTTON_MASK_LEFT:
 			if eMB.pressed:
-				ms.b1 = 1		# Flanco de BAJADA
+				Globales.ms.b1 = 3		# Boton + presset= true -> Flanco ON
 			else:
-				ms.b1 = 3		# Flanco de Subida
+				Globales.ms.b1 = 1		# Boton + presset= false -> Flanco OFF
+		print("Salida - event Globales.ms.b1= ", Globales.ms.b1, "  3: flanco ON - 1: flanco OFF")
+		
+		
+		

@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Constantes="*uid://ctrqnv501ngt5"
 Globales="*uid://dir4i2v6qtsyk"
+Utils="*uid://cogr5pkvwroh"
 
 [dotnet]
 
