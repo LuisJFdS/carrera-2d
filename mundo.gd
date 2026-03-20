@@ -2,7 +2,7 @@ extends Node2D
 #=============================================================================================
 #	FICHERO: mundo.gd
 #	_ready()
-#	VACIO
+#	VACIO: Puede pintar el árbol de nodos
 #	_process()
 #	PINTA el MUNDO: Rejilla, Ejes de coordenadas
 #	PINTA CRUCES con el botón del mouse
@@ -10,79 +10,65 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if Globales.flags.flag0:
-		print("Mundo  _ready() -inicio")
-		
+	Globales.centro_pantalla = get_viewport().get_visible_rect().size/2
+	
 	#Pinta el arbol de nodos.
 	#print(get_tree().root.get_tree_string_pretty())
-	
-	if Globales.flags.flag0:
-		print("Mundo  _ready() -final")
-		
 
+		
+class CruzDatos:
+	var hay_cruz: bool= false
+	var posicion: Vector2
+	var longitud: float = 50.0
+	var color_cruz = Color.CRIMSON
+	var grosor: float = 10
+var cruz:= CruzDatos.new()
+
+	
 # ============================================================================================
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if Globales.flags.flag0 and Globales.flags.flag4 < 2:
-		Globales.flags.flag4 += 1
-		print("Mundo  _process() -inicio flag4: ", Globales.flags.flag4)
+	# ================ Activa el pintado las CRUCES del mouse
 	if Globales.ms.b1 == 3:
+		Globales.ms.b1 = 2
+		cruz.posicion = Globales.ms.pos-Globales.centro_pantalla
+		cruz.hay_cruz = true
 		queue_redraw()
-		
-	if Globales.flags.flag0 and Globales.flags.flag4 < 2:
-		Globales.flags.flag4 += 1
-		print("Mundo  _process() -final flag4: ", Globales.flags.flag4)
 	
 
 	# ========================================================================================
 	#	Pinta el MUNDO
 	#=========================================================================================
-func _draw():	
-	if Globales.flags.flag0:
-		print("Mundo - _draw(): pinta_cuadricula, pinta_eje_coordenadas, pinta_cruz")	
-		
+func _draw():
+	
 	# ========= PINTA CUADRÍCULA =============================================================
-	var dim = Constantes.TAMANO_MUNDO_METROS
-	var origen= Vector2(-0.5 * dim, -0.5 * dim)	# Origen de la rejilla
-	var final = Vector2( 0.5 * dim,  0.5 * dim)		# Final de la rejilla
-	var escala = get_viewport().get_camera_2d().zoom.x
-	var grosor = 3/escala				# Z= 0.1 => g=10 : z= 1.0 => g=3
 	pinta_cuadricula(
-		origen,
-		final,
+		Vector2(-0.5 ,0.5)*Constantes.TAMANO_MUNDO_METROS,
+		Vector2(0.5 ,-0.5)*Constantes.TAMANO_MUNDO_METROS,
 		Constantes.MxC,
-		grosor
-	)	
+		3 / Globales.pantalla.zoom.x
+	)
+
 	# ========= PINTA EJES ===================================================================
 	pinta_eje_coordenadas(
 		Vector2(0,0),
-		Vector2(0.5 * Constantes.TAMANO_MUNDO_METROS, 0.5 * Constantes.TAMANO_MUNDO_METROS),
-		grosor
+		Vector2(0.5 ,0.5)*Constantes.TAMANO_MUNDO_METROS,
+		3 / Globales.pantalla.zoom.x
 	)
 
 	# ===== PINTAR CRUCES CON EL MOUSE ===================================================
-	print("Mundo - _draw() - Globales.ms b1= ", Globales.ms.b1, " -> pinta_cruz si b1= 3 ")
-	if Globales.ms.b1 == 3:
-		Globales.ms.b1 = 2
-		var punto = Vector2(15.0,15.0)
-		punto = Utils.pantalla_a_universo(
-			Globales.ms.pos,			# (pixel) Posicion del cursor en pantalla.
-			Globales.cam.size_P,		# (pixel) Tamaño de la pantalla.
-			Globales.cam.pos_U,			# (m) Posición del centro de pantalla en el universo
-			Globales.cam.rot_U,			# (rad) Giro de la camara en el universo
-			Globales.cam.zoom			# (multiplo) 1 .. 0.1
-		)
-		print("Tamaño de pantalla", Globales.cam.size_P)
+	if cruz.hay_cruz:
+		var posicion: Vector2
+		posicion = cruz.posicion / Globales.pantalla.zoom.x
+		posicion = posicion.rotated(Globales.pantalla.rotation)
+		posicion = posicion + Globales.pantalla.position
+		posicion.y = -posicion.y
 		pinta_cruz(
-			punto,					# punto
-			1.0,				# Tamaño en metros
-			Color.CRIMSON,		# Color
-			5					# Grosor en pixeles
+			posicion,				# (pixel) punto
+			cruz.longitud,			# (pixel) Tamaño
+			cruz.color_cruz,		# Color
+			cruz.grosor				# Grosor en pixeles
 		)
-		print("Cruz: ",punto)
-		Globales.ms.b1 ==2
-		
-	
 		
 	
 # ============================================================================================
@@ -94,7 +80,7 @@ func pinta_cuadricula(
 		ini: Vector2,		# (m) Origen de la cuadricula del suelo 
 		fin: Vector2,		# (m) Final de la cuadricula del suelo
 		paso: float,		# (m) Distancia entre lineas
-		grosor: int			# (pixel) grosor de la linea
+		grosor: float			# (pixel) grosor de la linea
 	) -> void:
 	var dist = fin - ini
 	if dist.x * paso > 0:
@@ -161,27 +147,36 @@ func pinta_eje_coordenadas(
 	
 	# ===== Pintar una CRUZ en el UNIVERSO ===================================================
 func pinta_cruz(
-		centro: Vector2,	# (m) Posición del centro de pantalla en el universo
-		tam: float,			# (m) Tamaño de la cruz
+		centro: Vector2,	# (pixel) Posición de la cruz
+		largo: float,		# (pixel) Tamaño de la cruz
 		color: Color,		# 
 		ancho: float = 10.0	# (pixsel) Grosor de las lineas de la cruz
 	) -> void:
-	var c= centro * Constantes.PxM
-	var l= tam * Constantes.PxM
-		
 	# línea horizontal
 	draw_line(
-		Vector2(c.x - l, -c.y),
-		Vector2(c.x + l, -c.y),
+		Vector2(centro.x - largo, -centro.y),
+		Vector2(centro.x -ancho, -centro.y),
+		color,
+		ancho
+	)
+	draw_line(
+		Vector2(centro.x +ancho, -centro.y),
+		Vector2(centro.x + largo, -centro.y),
 		color,
 		ancho
 	)
 	# línea vertical
 	draw_line(
-		Vector2(c.x, -c.y - l),
-		Vector2(c.x, -c.y + l),
+		Vector2(centro.x, -centro.y - largo),
+		Vector2(centro.x, -centro.y -ancho),
 		color,
 		ancho
 	)
-	print("Mundo - pinta_cruz(): ", c, " pixeles")
+	draw_line(
+		Vector2(centro.x, -centro.y +ancho),
+		Vector2(centro.x, -centro.y + largo),
+		color,
+		ancho
+	)
+
 	

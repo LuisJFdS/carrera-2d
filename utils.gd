@@ -1,44 +1,17 @@
 extends Node	# Node: globales.  Al ser globales necesita un Nodo
 #=============================================================================================
 # FICHERO: utils.gd
-# PUNTOS del UNIVERSO a PANTALLA y VICEVERSA
+# ROTAR la CÁMARA
 #
 #=============================================================================================
 
-# ===== Coordenadas UNIVERSO a PANTALLA ======================================================
-func universo_a_pantalla(
-		vectorCamara: Vector2,
-		rotacionCamara: float,	#Radianes
-		zoom: float,
-		viewport_size: Vector2
-	) -> Vector2:
-
-	# Centro de la pantalla
-	var centroPantalla: Vector2 = viewport_size * 0.5
-
-	# Posición relativa a la cámara
-	var relativo: Vector2 = -vectorCamara
-
-	# Aplicar rotación inversa de la cámara
-	relativo = relativo.rotated(-rotacionCamara)	# Radianes
-
-	# Aplicar zoom
-	relativo *= zoom
-
-	# Trasladar al sistema de pantalla
-	return centroPantalla + relativo
-
-# ===== Coordenadas PANTALLA a UNIVERSO ======================================================
-func pantalla_a_universo(
-	pp: Vector2,			# (pixel) punto de la pantalla (repecto al vertice sup-izq)
-	tp: Vector2,			# (pixel) tamaño de pantalla
-	pu: Vector2,			# (m) posición en el universo del centro de la pantalla
-	ru: float,				# (rad) rotación de la cámara en el universo
-	zm: float,				# (multiplo) zoom
-	) -> Vector2:
-	print ("Entrada PaU pp, tp, pu ", pp, tp, pu)
-	var Vr: Vector2 = pp - tp/2				# posicióm pp respecto al centro de la pantalla.
-	var resultado := pu + Vr / Constantes.PxM
-	resultado = resultado.rotated(ru)
-	resultado = resultado / zm
-	return resultado
+# ===== ROTAR la CÁMARA respecto a un PUNTO ==================================================
+func rotar_pantalla(
+		centro_de_rotacion: Vector2,
+		rotacion_radianes: float
+	) -> void:
+	var vector_a_rotar: Vector2 = Globales.pantalla.position - centro_de_rotacion
+	var vector_rotado: Vector2 = vector_a_rotar.rotated(rotacion_radianes)
+	Globales.pantalla.position = vector_rotado
+	Globales.pantalla.rotation += rotacion_radianes
+	
