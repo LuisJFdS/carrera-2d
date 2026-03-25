@@ -18,7 +18,7 @@ class CruzDatos:
 	var posicion: Vector2
 	var longitud: float = 50.0
 	var color_cruz = Color.CRIMSON
-	var grosor: float = 3
+	var grosor: float = 1
 var cruz1:= CruzDatos.new()
 
 	
@@ -61,14 +61,14 @@ func _draw():
 		Vector2(-0.5 ,0.5)*Constantes.TAMANO_MUNDO_METROS,
 		Vector2(0.5 ,-0.5)*Constantes.TAMANO_MUNDO_METROS,
 		Constantes.MxC,
-		1 / Globales.pantalla.zoom.x
+		1
 	)
 
 	# ========= PINTA EJES ===================================================================
 	pinta_eje_coordenadas(
 		Vector2(0,0),
 		Vector2(0.5 ,0.5)*Constantes.TAMANO_MUNDO_METROS,
-		1 / Globales.pantalla.zoom.x
+		1
 	)
 
 	# ===== PINTAR CRUCES CON EL MOUSE ===================================================
@@ -76,7 +76,7 @@ func _draw():
 		cruz1.posicion,
 		cruz1.longitud,			# (pixel) Tamaño
 		cruz1.color_cruz,		# Color
-		cruz1.grosor / Globales.pantalla.zoom.x			# Grosor en pixeles
+		cruz1.grosor			# Grosor en pixeles
 	)
 	
 # ============================================================================================
@@ -105,14 +105,14 @@ func pinta_cuadricula(
 			Vector2(ini.x, y),
 			Vector2(fin.x, y),
 			Constantes.GRID_COLOR_G,
-			grosor
+			grosor / Globales.pantalla.zoom.x
 		)
 	for x in range(ini.x, fin.x+dist.x, dist.x):
 		draw_line(
 			Vector2(x, ini.x),
 			Vector2(x, fin.x),
 			Constantes.GRID_COLOR_G,
-			grosor
+			grosor / Globales.pantalla.zoom.x
 		)
 
 # ========= PINTA EJE de COORDENADAS =========================================================
@@ -126,14 +126,14 @@ func pinta_eje_coordenadas(
 		centro,
 		Vector2(centro.x + long.x, centro.x),
 		Color.RED,
-		grosor
+		grosor / Globales.pantalla.zoom.x
 	)
 	# EJE X NEGATIVO (rojo -> discontinuo)
 	draw_dashed_line(
 		centro,
 		Vector2(centro.x - long.x, centro.x),
 		Color.RED,
-		grosor,
+		grosor / Globales.pantalla.zoom.x,
 		50.0
 	)
 	# EJE Y POSITIVO (verde -> continuo)
@@ -141,7 +141,7 @@ func pinta_eje_coordenadas(
 		centro,
 		Vector2(centro.y, centro.y-long.y),
 		Color.GREEN,
-		grosor,
+		grosor / Globales.pantalla.zoom.x,
 		50.0
 	)
 	# EJE Y NEGATIVO (verde -> discontinuo)
@@ -149,7 +149,7 @@ func pinta_eje_coordenadas(
 		centro,
 		Vector2(centro.y, centro.y + long.y),
 		Color.GREEN,
-		grosor,				#Grosor de la línea
+		grosor / Globales.pantalla.zoom.x,				#Grosor de la línea
 		50.0				#Longitud de los segmentos
 	)
 	
@@ -161,31 +161,33 @@ func pinta_cruz(
 		grosor: float		# (pixsel) Grosor de las lineas de la cruz
 	) -> void:
 	
+	var diametro_hueco= 2 * grosor / Globales.pantalla.zoom.x
+	
 	# línea horizontal
 	draw_line(
 		Vector2(centro.x - largo, -centro.y),
-		Vector2(centro.x -grosor/2, -centro.y),
+		Vector2(centro.x -diametro_hueco, -centro.y),
 		color,
-		grosor
+		grosor / Globales.pantalla.zoom.x
 	)
 	draw_line(
-		Vector2(centro.x +grosor/2, -centro.y),
+		Vector2(centro.x +diametro_hueco, -centro.y),
 		Vector2(centro.x + largo, -centro.y),
 		color,
-		grosor
+		grosor / Globales.pantalla.zoom.x
 	)
 	# línea vertical
 	draw_line(
 		Vector2(centro.x, -centro.y - largo),
-		Vector2(centro.x, -centro.y -grosor/2),
+		Vector2(centro.x, -centro.y -diametro_hueco),
 		color,
-		grosor
+		grosor / Globales.pantalla.zoom.x
 	)
 	draw_line(
-		Vector2(centro.x, -centro.y +grosor/2),
+		Vector2(centro.x, -centro.y +diametro_hueco),
 		Vector2(centro.x, -centro.y + largo),
 		color,
-		grosor
+		grosor / Globales.pantalla.zoom.x
 	)
 
 	
