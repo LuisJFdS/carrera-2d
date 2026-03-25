@@ -14,7 +14,6 @@ var mundo: Node
 func _ready() -> void:
 	mundo = get_node("Mundo")						# Permite utilizar las funciones de Mundo
 	Globales.pantalla = get_node("Coche/Camara")
-	Globales.centro_pantalla = get_viewport().get_visible_rect().size / 2
 
 	# ============== INICIALIZA la PANTALLA ==================================================
 	Globales.pantalla.enabled = true
@@ -111,7 +110,9 @@ func _input(event) -> void:
 	if event is InputEventMouseMotion:
 		var eMM := event as InputEventMouseMotion # position, relative y velocity
 		#print("MouseMotion: ", eMM)
-		Globales.ms.pos = eMM.position
+		
+		var centro = get_viewport().get_visible_rect().size / 2
+		Globales.ms.pos = eMM.position - centro
 		Globales.ms.rel = eMM.relative
 		Globales.ms.vel = eMM.velocity
 		Globales.ms.mov += 1			# permite verificar si se han hecho varios movimientos
@@ -120,13 +121,9 @@ func _input(event) -> void:
 	if event  is InputEventMouseButton:
 		var eMB := event as InputEventMouseButton # 1,2,3,4 y 5 
 		#print("Salida - ", eMB)
-		# print("Salida - event Boton mouse: - index: b1= ", eMB.button_index)
 		if eMB.button_index and MOUSE_BUTTON_MASK_LEFT:
 			if eMB.pressed:
 				Globales.ms.b1 = 3		# Boton + presset= true -> Flanco ON
 			else:
 				Globales.ms.b1 = 1		# Boton + presset= false -> Flanco OFF
-		#print("Salida - event Globales.ms.b1= ", Globales.ms.b1, "  3: flanco ON - 1: flanco OFF")
-		
-		
-		
+	

@@ -10,11 +10,9 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Globales.centro_pantalla = get_viewport().get_visible_rect().size/2
-	
 	#Pinta el arbol de nodos.
 	#print(get_tree().root.get_tree_string_pretty())
-
+	pass
 		
 class CruzDatos:
 	var hay_cruz: bool= false
@@ -22,7 +20,7 @@ class CruzDatos:
 	var longitud: float = 50.0
 	var color_cruz = Color.CRIMSON
 	var grosor: float = 10
-var cruz:= CruzDatos.new()
+var cruz1:= CruzDatos.new()
 
 	
 # ============================================================================================
@@ -31,8 +29,8 @@ func _process(delta: float) -> void:
 	# ================ Activa el pintado las CRUCES del mouse
 	if Globales.ms.b1 == 3:
 		Globales.ms.b1 = 2
-		cruz.posicion = Globales.ms.pos-Globales.centro_pantalla
-		cruz.hay_cruz = true
+		cruz1.posicion = Globales.ms.pos
+		cruz1.hay_cruz = true
 		queue_redraw()
 	
 
@@ -57,17 +55,17 @@ func _draw():
 	)
 
 	# ===== PINTAR CRUCES CON EL MOUSE ===================================================
-	if cruz.hay_cruz:
+	if cruz1.hay_cruz:
 		var posicion: Vector2
-		posicion = cruz.posicion / Globales.pantalla.zoom.x
+		posicion = cruz1.posicion / Globales.pantalla.zoom.x
 		posicion = posicion.rotated(Globales.pantalla.rotation)
 		posicion = posicion + Globales.pantalla.position
 		posicion.y = -posicion.y
 		pinta_cruz(
 			posicion,				# (pixel) punto
-			cruz.longitud,			# (pixel) Tamaño
-			cruz.color_cruz,		# Color
-			cruz.grosor				# Grosor en pixeles
+			cruz1.longitud,			# (pixel) Tamaño
+			cruz1.color_cruz,		# Color
+			cruz1.grosor				# Grosor en pixeles
 		)
 		
 	

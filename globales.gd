@@ -7,7 +7,6 @@ extends Node	# Node: globales. Al ser globales necesita un Nodo
 #=============================================================================================
 
 var pantalla: Camera2D
-var centro_pantalla: Vector2 = Vector2.ZERO
 var posicion_pantalla: Vector2 = Vector2.ZERO
 
 class MouseDatos:
