@@ -15,11 +15,10 @@ func _ready() -> void:
 	pass
 		
 class CruzDatos:
-	var hay_cruz: bool= false
 	var posicion: Vector2
 	var longitud: float = 50.0
 	var color_cruz = Color.CRIMSON
-	var grosor: float = 10
+	var grosor: float = 3
 var cruz1:= CruzDatos.new()
 
 	
@@ -29,10 +28,28 @@ func _process(delta: float) -> void:
 	# ================ Activa el pintado las CRUCES del mouse
 	if Globales.ms.b1 == 3:
 		Globales.ms.b1 = 2
-		cruz1.posicion = Globales.ms.pos
-		cruz1.hay_cruz = true
+		var posicion: Vector2
+		posicion = Globales.ms.pos
+		posicion = posicion / Globales.pantalla.zoom.x
+		posicion = posicion.rotated(Globales.pantalla.rotation)
+		posicion = posicion + Globales.pantalla.position
+		posicion.y = -posicion.y
+		cruz1.posicion= posicion
 		queue_redraw()
-	
+
+
+	# ================= PROCESA: -ZOOM CÁMARA MANUAL- ========================================
+	# Se han creado dos ACCIONES en el MAPA de ENTRADAS
+	# "+" -> "zoom+"  y  "-" -> "zoom-"
+	var zoom : float= 0.0
+	if Input.is_action_pressed("zoom+"):
+		zoom = Globales.pantalla.zoom.x * 1.02
+	if Input.is_action_pressed("zoom-"):
+		zoom = Globales.pantalla.zoom.x / 1.02
+	if zoom > 0.0:
+		zoom = clamp(zoom, Constantes.ZOOM_MIN, Constantes.ZOOM_MAX)
+		Globales.pantalla.zoom = Vector2(zoom, zoom)
+		queue_redraw()
 
 	# ========================================================================================
 	#	Pinta el MUNDO
@@ -44,30 +61,23 @@ func _draw():
 		Vector2(-0.5 ,0.5)*Constantes.TAMANO_MUNDO_METROS,
 		Vector2(0.5 ,-0.5)*Constantes.TAMANO_MUNDO_METROS,
 		Constantes.MxC,
-		3 / Globales.pantalla.zoom.x
+		1 / Globales.pantalla.zoom.x
 	)
 
 	# ========= PINTA EJES ===================================================================
 	pinta_eje_coordenadas(
 		Vector2(0,0),
 		Vector2(0.5 ,0.5)*Constantes.TAMANO_MUNDO_METROS,
-		3 / Globales.pantalla.zoom.x
+		1 / Globales.pantalla.zoom.x
 	)
 
 	# ===== PINTAR CRUCES CON EL MOUSE ===================================================
-	if cruz1.hay_cruz:
-		var posicion: Vector2
-		posicion = cruz1.posicion / Globales.pantalla.zoom.x
-		posicion = posicion.rotated(Globales.pantalla.rotation)
-		posicion = posicion + Globales.pantalla.position
-		posicion.y = -posicion.y
-		pinta_cruz(
-			posicion,				# (pixel) punto
-			cruz1.longitud,			# (pixel) Tamaño
-			cruz1.color_cruz,		# Color
-			cruz1.grosor				# Grosor en pixeles
-		)
-		
+	pinta_cruz(
+		cruz1.posicion,
+		cruz1.longitud,			# (pixel) Tamaño
+		cruz1.color_cruz,		# Color
+		cruz1.grosor / Globales.pantalla.zoom.x			# Grosor en pixeles
+	)
 	
 # ============================================================================================
 #	FUNCIONES AUXILIARES
@@ -148,33 +158,34 @@ func pinta_cruz(
 		centro: Vector2,	# (pixel) Posición de la cruz
 		largo: float,		# (pixel) Tamaño de la cruz
 		color: Color,		# 
-		ancho: float = 10.0	# (pixsel) Grosor de las lineas de la cruz
+		grosor: float		# (pixsel) Grosor de las lineas de la cruz
 	) -> void:
+	
 	# línea horizontal
 	draw_line(
 		Vector2(centro.x - largo, -centro.y),
-		Vector2(centro.x -ancho, -centro.y),
+		Vector2(centro.x -grosor/2, -centro.y),
 		color,
-		ancho
+		grosor
 	)
 	draw_line(
-		Vector2(centro.x +ancho, -centro.y),
+		Vector2(centro.x +grosor/2, -centro.y),
 		Vector2(centro.x + largo, -centro.y),
 		color,
-		ancho
+		grosor
 	)
 	# línea vertical
 	draw_line(
 		Vector2(centro.x, -centro.y - largo),
-		Vector2(centro.x, -centro.y -ancho),
+		Vector2(centro.x, -centro.y -grosor/2),
 		color,
-		ancho
+		grosor
 	)
 	draw_line(
-		Vector2(centro.x, -centro.y +ancho),
+		Vector2(centro.x, -centro.y +grosor/2),
 		Vector2(centro.x, -centro.y + largo),
 		color,
-		ancho
+		grosor
 	)
 
 	

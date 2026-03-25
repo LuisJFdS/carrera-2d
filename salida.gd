@@ -4,8 +4,7 @@ extends Node2D
 #	_ready()
 #	INICIALIZA la CÁMARA
 #	_process()
-#	CAPTURA movimientos manuales de ROTACIÓN del teclado
-#	CAPTURA movimientos manuales de la CÁMARA: ZOOM, ROTACIÓN y DESPLAZAMIENTO
+#	CAPTURA movimientos del TECLADO de la CÁMARA: ZOOM, ROTACIÓN y DESPLAZAMIENTO
 #	CAPTURA Botones del MOUSE
 #=============================================================================================
 var mundo: Node
@@ -28,26 +27,6 @@ func _ready() -> void:
 #func _process(delta: float) -> void:
 #=============================================================================================
 func _process(_delta):
-	
-	# ================= PROCESA: -ZOOM CÁMARA MANUAL- ========================================
-	# Se han creado dos ACCIONES en el MAPA de ENTRADAS
-	# "+" -> "zoom+"  y  "-" -> "zoom-"
-	var min_zoom := 0.1
-	var max_zoom := 1.0
-	var nuevo_zoom := Globales.pantalla.zoom.x
-	if Input.is_action_pressed("zoom+"):
-		nuevo_zoom = nuevo_zoom * 1.02
-		nuevo_zoom = clamp(nuevo_zoom, min_zoom, max_zoom)
-		Globales.pantalla.zoom = Vector2(nuevo_zoom, nuevo_zoom)
-		queue_redraw()
-		#print(" [+] : Zoom ++: ",nuevo_zoom)
-	
-	if Input.is_action_pressed("zoom-"):
-		nuevo_zoom = nuevo_zoom * (1/1.02)
-		nuevo_zoom = clamp(nuevo_zoom, min_zoom, max_zoom)
-		Globales.pantalla.zoom = Vector2(nuevo_zoom, nuevo_zoom)
-		queue_redraw()
-		#print(" [-] : Zoom --: ",nuevo_zoom)
 	
 	# ================ PROCESA -ROTACIÓN CÁMARA MANUAL- ======================================
 	#	Utiliza la captura de eventos "func _input(event)" al inicio
@@ -88,16 +67,18 @@ func _process(_delta):
 #					  	accion_rot		G.ms.pos/rel/vel/on		 G.ms.b1 ... b5
 # ===========================================================================================
 
-#====== Captura los movimientos de ROTACIÓN con ">" y "<" ====================================
 var accion_rot : String = ""
 func _input(event) -> void:
-	#====== Captura los movimientos de rotación con ">" y "<" ================================
+	
+	#====== Captura ROTACION teclado con ">" y "<" ===========================================
 	if event is InputEventKey and not event.echo:
 		var ek := event as InputEventKey		#Teclado
+		#print(ek)
 		#if ek.keycode == 62 and ek.pressed: #OJO: Tecla ">" independiente
 			#accion_rot = "rotar_der"
-		#else:
-			#accion_rot = ""
+		#elif ek.keycode == 62 and not ek.pressed:
+			#accion_rot=""
+			
 		if ek.keycode == 60 and ek.pressed:
 			if ek.shift_pressed:
 				accion_rot = "rotar_der"
@@ -126,4 +107,3 @@ func _input(event) -> void:
 				Globales.ms.b1 = 3		# Boton + presset= true -> Flanco ON
 			else:
 				Globales.ms.b1 = 1		# Boton + presset= false -> Flanco OFF
-	
