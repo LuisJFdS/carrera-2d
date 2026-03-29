@@ -7,15 +7,17 @@ extends Node	# Node: globales. Al ser globales necesita un Nodo
 #=============================================================================================
 
 var pantalla: Camera2D
-var posicion_pantalla: Vector2 = Vector2.ZERO
+#var posicion_pantalla: Vector2 = Vector2.ZERO
+var nuevo_zoom: float = 0.0
+var node_coche: Node2D
 
 class MouseDatos:
-	var mov : int = 0
-	var pos : Vector2 = Vector2.ZERO
-	var rel : Vector2 = Vector2.ZERO
-	var vel : Vector2 = Vector2.ZERO
-	var b1 : int = 0
-	var b2 : int = 0
-	var b3 : int = 0
+	var mov: int = 0
+	var pos: Vector2 = Vector2.ZERO
+	var rel: Vector2 = Vector2.ZERO
+	var vel: Vector2 = Vector2.ZERO
+	var b1: int = 0
+	var b2: int = 0
+	var b3: int = 0
 	var b45 : int =0
-var ms := MouseDatos.new()
+var ms: = MouseDatos.new()

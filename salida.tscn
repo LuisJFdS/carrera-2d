@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://3k1fjtnu5lj7" path="res://Coche F1 rojo.png" id="1_0xb47"]
 [ext_resource type="Script" uid="uid://nsjvg1k0hdct" path="res://salida.gd" id="1_5y13o"]
 [ext_resource type="Script" uid="uid://cucswbdingwot" path="res://mundo.gd" id="3_ds6rk"]
+[ext_resource type="Script" uid="uid://dy84bbh7nn3l5" path="res://coche.gd" id="3_kwbdk"]
 
 [node name="Salida" type="Node2D" unique_id=1055488926]
 script = ExtResource("1_5y13o")
@@ -11,6 +12,7 @@ script = ExtResource("1_5y13o")
 script = ExtResource("3_ds6rk")
 
 [node name="Coche" type="Node2D" parent="." unique_id=344121432]
+script = ExtResource("3_kwbdk")
 
 [node name="CocheF1" type="Sprite2D" parent="Coche" unique_id=265185957]
 rotation = 3.1415927

@@ -8,48 +8,63 @@ extends Node2D
 #	PINTA CRUCES con el botón del mouse
 #=============================================================================================
 
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#Pinta el arbol de nodos.
-	#print(get_tree().root.get_tree_string_pretty())
+	#print(get_tree().root.get_tree_string_pretty())	# Imprime el ARBOL de NODOS
 	pass
 		
 class CruzDatos:
 	var posicion: Vector2
-	var longitud: float = 50.0
+	var longitud: float = 40.0
 	var color_cruz = Color.CRIMSON
 	var grosor: float = 1
+	var destino_coche: bool = false
 var cruz1:= CruzDatos.new()
 
 	
 # ============================================================================================
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	# ================ Activa el pintado las CRUCES del mouse
+	
+	var coche: Node2D = get_parent().get_node("Coche")	#Mundo y Coche "hermanos" -> get_parent()
+	var camara: Camera2D = coche.get_node("Camara")
+	
+	# ================ b1 == 3 --> Activa el pintado de las CRUCES del mouse
 	if Globales.ms.b1 == 3:
 		Globales.ms.b1 = 2
-		var posicion: Vector2
-		posicion = Globales.ms.pos
-		posicion = posicion / Globales.pantalla.zoom.x
-		posicion = posicion.rotated(Globales.pantalla.rotation)
-		posicion = posicion + Globales.pantalla.position
-		posicion.y = -posicion.y
-		cruz1.posicion= posicion
+		var punto: Vector2
+		punto = Globales.ms.pos
+		punto = punto / Globales.pantalla.zoom.x
+		var punto_ejes_coche: Vector2
+		punto_ejes_coche = camara.position + punto.rotated(camara.rotation)
+		var punto_ejes_mundo: Vector2
+		punto_ejes_mundo = coche.position + punto_ejes_coche.rotated(-coche.rotation)
+		punto_ejes_mundo.y = -punto_ejes_mundo.y
+		cruz1.posicion= punto_ejes_mundo
+		cruz1.destino_coche = true
 		queue_redraw()
 
 
 	# ================= PROCESA: -ZOOM CÁMARA MANUAL- ========================================
 	# Se han creado dos ACCIONES en el MAPA de ENTRADAS
 	# "+" -> "zoom+"  y  "-" -> "zoom-"
-	var zoom : float= 0.0
-	if Input.is_action_pressed("zoom+"):
-		zoom = Globales.pantalla.zoom.x * 1.02
-	if Input.is_action_pressed("zoom-"):
-		zoom = Globales.pantalla.zoom.x / 1.02
-	if zoom > 0.0:
-		zoom = clamp(zoom, Constantes.ZOOM_MIN, Constantes.ZOOM_MAX)
-		Globales.pantalla.zoom = Vector2(zoom, zoom)
+	if Globales.nuevo_zoom > 0.0:
+		Globales.pantalla.zoom = Vector2(Globales.nuevo_zoom, Globales.nuevo_zoom)
+		Globales.nuevo_zoom = 0
 		queue_redraw()
+
+	else:
+		var zoom : float= 0.0
+		if Input.is_action_pressed("zoom+"):
+			zoom = Globales.pantalla.zoom.x * 1.02
+		if Input.is_action_pressed("zoom-"):
+			zoom = Globales.pantalla.zoom.x / 1.02
+		if zoom > 0.0:
+			zoom = clamp(zoom, Constantes.ZOOM_MIN, Constantes.ZOOM_MAX)
+			Globales.pantalla.zoom = Vector2(zoom, zoom)
+			queue_redraw()
 
 	# ========================================================================================
 	#	Pinta el MUNDO
