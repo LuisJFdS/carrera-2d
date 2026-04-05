@@ -12,7 +12,7 @@ var mundo: Node
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#mundo = get_node("Mundo")						# Permite utilizar las funciones de Mundo
-	Globales.pantalla = get_node("Coche/Camara")
+	Globales.pantalla = get_node("Mundo/Camara")
 	Globales.node_coche = get_node("Coche")
 
 	# ============== INICIALIZA la PANTALLA ==================================================
@@ -30,7 +30,6 @@ func _ready() -> void:
 #func _process(delta: float) -> void:
 #=============================================================================================
 func _process(_delta):
-	
 	# ================ PROCESA -ROTACIÓN CÁMARA MANUAL- ======================================
 	#	Utiliza la captura de eventos "func _input(event)" al inicio
 	#	"<" rota la cámara a la izquierda. Shift + ">" rota hacia la izquierda.

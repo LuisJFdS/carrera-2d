@@ -29,23 +29,20 @@ var cruz1:= CruzDatos.new()
 func _process(delta: float) -> void:
 	
 	var coche: Node2D = get_parent().get_node("Coche")	#Mundo y Coche "hermanos" -> get_parent()
-	var camara: Camera2D = coche.get_node("Camara")
+	var camara: Camera2D = get_node("Camara")
 	
 	# ================ b1 == 3 --> Activa el pintado de las CRUCES del mouse
 	if Globales.ms.b1 == 3:
 		Globales.ms.b1 = 2
-		var punto: Vector2
-		punto = Globales.ms.pos
-		punto = punto / Globales.pantalla.zoom.x
-		var punto_ejes_coche: Vector2
-		punto_ejes_coche = camara.position + punto.rotated(camara.rotation)
-		var punto_ejes_mundo: Vector2
-		punto_ejes_mundo = coche.position + punto_ejes_coche.rotated(-coche.rotation)
-		punto_ejes_mundo.y = -punto_ejes_mundo.y
-		cruz1.posicion= punto_ejes_mundo/Constantes.PxM
-		# ................................................... AJUSTE PUNTO CRUZ
+		var punto: Vector2 = Globales.ms.pos/ Globales.pantalla.zoom.x
+		var punto_ejes: Vector2 = camara.position + punto.rotated(camara.rotation)
+		#var punto_ejes_mundo: Vector2
+		#punto_ejes_mundo = coche.position + punto_ejes_coche.rotated(-coche.rotation)
+		punto_ejes.y = -punto_ejes.y
+		cruz1.posicion= punto_ejes/Constantes.PxM
+		# ........................................ AJUSTE PUNTO CRUZ MULTIPLO de 5 ....
 		cruz1.posicion= 5 * round(cruz1.posicion/5)
-		# .....................................................................
+		# ......................................... FIN AJUSTE ........................
 		cruz1.destino_coche = true
 		queue_redraw()
 

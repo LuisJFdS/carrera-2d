@@ -3,7 +3,7 @@ extends Node2D
 class Coche_Jugador:
 	var pos: Vector2 = Vector2.ZERO
 	var rot: float = 0.0				# rad
-	const ALINEACION_UNIVERSO = PI/4
+	const ALINEACION_UNIVERSO = PI
 	var dest: Vector2 = Vector2.ZERO	# (m)
 	var vel: Vector2 = Vector2.ZERO
 	var acel: Vector2 = Vector2.ZERO	# (m/s2)
@@ -12,6 +12,8 @@ class Coche_Jugador:
 var coche_j: = Coche_Jugador.new()
 
 func _ready() -> void:
+	coche_j.rot = 0
+	rotation = coche_j.ALINEACION_UNIVERSO + coche_j.rot
 	# print("get_parent: ", get_parent())
 	# print("get_parent().get_node('Mundo'): ", get_parent().get_node("Mundo"))
 	pass
@@ -43,10 +45,8 @@ func _process(delta: float) -> void:
 			coche_j.pos = coche_j.dest
 			var delta_ajustada = delta - (coche_j.delta_suma - 1)
 			coche_j.vel += coche_j.acel * delta_ajustada
-			print("FINAL t =", String.num(coche_j.delta_suma, 3), "  delta ajustada: ", String.num(delta_ajustada, 3))
 			coche_j.automatico = false
 		
-		
 		position = Vector2(coche_j.pos.x * Constantes.PxM, - coche_j.pos.y * Constantes.PxM)
-		rotation = coche_j.vel.angle() - coche_j.ALINEACION_UNIVERSO
+		rotation =  coche_j.ALINEACION_UNIVERSO + coche_j.vel.angle_to(Vector2.DOWN)
 		
