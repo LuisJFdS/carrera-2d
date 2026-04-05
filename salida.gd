@@ -22,7 +22,7 @@ func _ready() -> void:
 	Globales.pantalla.zoom = Vector2(0.2,0.2)
 	
 	# ============== INICIALIZA el COCHE del JUGADOR =========================================
-	Globales.node_coche.position= Vector2(-10,0)
+	Globales.node_coche.position= Vector2(0,0)
 
 # ============================================================================================
 #	_process

@@ -16,10 +16,10 @@ func _ready() -> void:
 	pass
 		
 class CruzDatos:
-	var posicion: Vector2
-	var longitud: float = 40.0
+	var posicion: Vector2			# (m)
+	var longitud: float = 40.0		# (pixel)
 	var color_cruz = Color.CRIMSON
-	var grosor: float = 1
+	var grosor: float = 1			# (pixel)
 	var destino_coche: bool = false
 var cruz1:= CruzDatos.new()
 
@@ -42,7 +42,10 @@ func _process(delta: float) -> void:
 		var punto_ejes_mundo: Vector2
 		punto_ejes_mundo = coche.position + punto_ejes_coche.rotated(-coche.rotation)
 		punto_ejes_mundo.y = -punto_ejes_mundo.y
-		cruz1.posicion= punto_ejes_mundo
+		cruz1.posicion= punto_ejes_mundo/Constantes.PxM
+		# ................................................... AJUSTE PUNTO CRUZ
+		cruz1.posicion= 5 * round(cruz1.posicion/5)
+		# .....................................................................
 		cruz1.destino_coche = true
 		queue_redraw()
 
@@ -88,10 +91,10 @@ func _draw():
 
 	# ===== PINTAR CRUCES CON EL MOUSE ===================================================
 	pinta_cruz(
-		cruz1.posicion,
+		cruz1.posicion,			# (m)
 		cruz1.longitud,			# (pixel) Tamaño
 		cruz1.color_cruz,		# Color
-		cruz1.grosor			# Grosor en pixeles
+		cruz1.grosor			# (pixel) Grosor
 	)
 	
 # ============================================================================================
@@ -170,14 +173,14 @@ func pinta_eje_coordenadas(
 	
 	# ===== Pintar una CRUZ en el UNIVERSO ===================================================
 func pinta_cruz(
-		centro: Vector2,	# (pixel) Posición de la cruz
+		centro_m: Vector2,	# (m) Posición de la cruz
 		largo: float,		# (pixel) Tamaño de la cruz
 		color: Color,		# 
 		grosor: float		# (pixsel) Grosor de las lineas de la cruz
 	) -> void:
 	
 	var diametro_hueco= 2 * grosor / Globales.pantalla.zoom.x
-	
+	var centro: Vector2 = centro_m * Constantes.PxM
 	# línea horizontal
 	draw_line(
 		Vector2(centro.x - largo, -centro.y),

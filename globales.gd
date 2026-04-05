@@ -7,7 +7,6 @@ extends Node	# Node: globales. Al ser globales necesita un Nodo
 #=============================================================================================
 
 var pantalla: Camera2D
-#var posicion_pantalla: Vector2 = Vector2.ZERO
 var nuevo_zoom: float = 0.0
 var node_coche: Node2D
 
